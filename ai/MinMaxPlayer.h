@@ -8,34 +8,7 @@
 #include "Minimax.h"
 #include "BaseEvaluator.h"
 
-//bool loadModelParameters(double& a, double& b) {
-//    ifstream inFile("playData.txt");
-//    if (inFile.is_open()) {
-//        inFile >> a >> b;
-//        inFile.close();
-//        return true;
-//    } else {
-//        std::cerr << "Unable to open file for reading. playData\n";
-//        return false;
-//    }
-//}
-//int predictDepth(double availableTime, double a, double b) {
-//    // Given the simplified model and the goal to predict depth, we start with an initial guess for depth
-//    // and iteratively adjust it based on the estimated time taken to reach that depth.
-//    int depth = 1;
-//    while (depth<=MAX_DEPTH) {
-//        double predictedTime = a * std::pow(b, depth);
-//        cout<<depth<<" "<<predictedTime<<endl;
-//        if (predictedTime > availableTime) {
-//            depth--;
-//            break;// Last depth that fits within the budget
-//        }
-//        depth++;
-//    }
-//    // In theory, we should never reach here due to the loop's condition
-//    return depth;
-////    return max(MIN_DEPTH,min(depth,MAX_DEPTH));
-//}
+
 double adjustTimeForMove(int moveIndex, int totalMoves, double baseTimePerMove) {
     double timeMultiplier = 1.0; // Default
     int third = totalMoves / 3;
@@ -52,13 +25,11 @@ double adjustTimeForMove(int moveIndex, int totalMoves, double baseTimePerMove) 
 }
 class MinMaxPlayer :public Player{
     Minimax m;
-    int depth;
+//    int depth;
 public:
-    MinMaxPlayer(int p,unique_ptr<BaseEvaluator> E,int d):Player(p),m(p, std::move(E)),depth(d){
+    MinMaxPlayer(int p,unique_ptr<BaseEvaluator> E):Player(p),m(p, std::move(E)){
     }
-    Move playMove(Reversi board, double t){
-        double a,b;
-
+    Move playMove(Reversi& board, double t){
         int totalCount=BoardHelper::totalDiscCount(board);
         int moveIndex=totalCount/2+1;
         int movesLeft=(N*N-(totalCount))/2;

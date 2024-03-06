@@ -24,7 +24,7 @@ public:
         int isolationScore;
     };
 
-    static EvaluationResult evaluateBoard(const Reversi board, int player) {
+    static EvaluationResult evaluateBoard(Reversi& board, int player) {
         int playerDisks = 0, opponentDisks = 0, myScore = 0, opponentScore = 0;
 //        int myStableDiscs = 0, opStableDiscs = 0; // Simplified stability calculation
 //
@@ -93,7 +93,7 @@ public:
     }
 
 private:
-    static int calculateIslandScore(const Reversi& board, int player, int playerDiscCount, int opDiscCount) {
+    static int calculateIslandScore(Reversi& board, int player, int playerDiscCount, int opDiscCount) {
         std::vector<std::vector<bool>> visited(N, std::vector<bool>(N, false));
         int myScore = 0, opScore = 0;
         int totalDiscs = BoardHelper::totalDiscCount(board);
@@ -277,7 +277,7 @@ private:
 
         return myScore - opponentScore;
     }
-    int stability(const Reversi board, int player) {
+    int stability(const Reversi& board, int player) {
         int oplayer = 1 - player; // Flip player: if 0 then 1, if 1 then 0
 
         int myStableDiscs = 0;
@@ -299,43 +299,43 @@ private:
         if (myStableDiscs + opStableDiscs == 0) return 0; // To avoid division by zero
         return 100*(myStableDiscs - opStableDiscs) / (myStableDiscs + opStableDiscs);
     }
-    int mobility(const Reversi board, int player){
-        int playerMoves = BoardHelper::findNextMoves(board, player, false).size();
-        int opponentMoves = BoardHelper::findNextMoves(board, 1 - player, false).size();
-
-//        cout<<"Player Moves:"<<playerMoves<<" Opp Moves:"<<opponentMoves<<endl;
-        return  100*(playerMoves - opponentMoves)/(playerMoves + opponentMoves+1);
-
-    }
-    int frontier(const Reversi& board, int player) {
-        vector<Move> myFrontierSquares = BoardHelper::getFrontierSquares(board, player);
-        vector<Move> opFrontierSquares = BoardHelper::getFrontierSquares(board, 1 - player);
-
-        int myFrontier = myFrontierSquares.size();
-        int opFrontier = opFrontierSquares.size();
-
-        // Normalize the difference to avoid bias due to board size or game phase
-        if (myFrontier + opFrontier == 0) return 0; // Avoid division by zero if there are no frontier squares
-
-        return 100*(opFrontier - myFrontier) / (float)(myFrontier + opFrontier);
-    }
-    int cornerGrab(const Reversi board, int player){
-        int cornerGrab=0;
-        for (const auto& move : BoardHelper::findNextMoves(board, player,false)) {
-            if ((move.x == 0 && move.y == 0) || (move.x == 0 && move.y == N-1) ||
-                (move.x == N-1 && move.y == 0) || (move.x == N-1 && move.y == N-1)) {
-                return 100;
-//                cornerGrab=100; // Highly prioritize corner captures
-            }
-        }
-//        for (const auto& move : BoardHelper::findNextMoves(board, 1-player,false)) {
+//    int mobility(const Reversi& board, int player){
+//        int playerMoves = BoardHelper::findNextMoves(board, player, false).size();
+//        int opponentMoves = BoardHelper::findNextMoves(board, 1 - player, false).size();
+//
+////        cout<<"Player Moves:"<<playerMoves<<" Opp Moves:"<<opponentMoves<<endl;
+//        return  100*(playerMoves - opponentMoves)/(playerMoves + opponentMoves+1);
+//
+//    }
+//    int frontier(const Reversi& board, int player) {
+//        vector<Move> myFrontierSquares = BoardHelper::getFrontierSquares(board, player);
+//        vector<Move> opFrontierSquares = BoardHelper::getFrontierSquares(board, 1 - player);
+//
+//        int myFrontier = myFrontierSquares.size();
+//        int opFrontier = opFrontierSquares.size();
+//
+//        // Normalize the difference to avoid bias due to board size or game phase
+//        if (myFrontier + opFrontier == 0) return 0; // Avoid division by zero if there are no frontier squares
+//
+//        return 100*(opFrontier - myFrontier) / (float)(myFrontier + opFrontier);
+//    }
+//    int cornerGrab(const Reversi board, int player){
+//        int cornerGrab=0;
+//        for (const auto& move : BoardHelper::findNextMoves(board, player,false)) {
 //            if ((move.x == 0 && move.y == 0) || (move.x == 0 && move.y == N-1) ||
 //                (move.x == N-1 && move.y == 0) || (move.x == N-1 && move.y == N-1)) {
-//                cornerGrab-=500; // Highly prioritize corner captures
+//                return 100;
+////                cornerGrab=100; // Highly prioritize corner captures
 //            }
 //        }
-        return cornerGrab;
-    }
+////        for (const auto& move : BoardHelper::findNextMoves(board, 1-player,false)) {
+////            if ((move.x == 0 && move.y == 0) || (move.x == 0 && move.y == N-1) ||
+////                (move.x == N-1 && move.y == 0) || (move.x == N-1 && move.y == N-1)) {
+////                cornerGrab-=500; // Highly prioritize corner captures
+////            }
+////        }
+//        return cornerGrab;
+//    }
 
     // Assuming BoardHelper class exists and provides necessary functionality.
 };

@@ -147,7 +147,7 @@ int main(){
 
 ////
     std::unique_ptr<RTEvaluator> rt=std::make_unique<RTEvaluator>(timingSet3,weightSet3,SQUARE_SCORE2);
-    std::unique_ptr<Player> Player1 = std::make_unique<MinMaxPlayer>(1,std::move(rt),4);
+    std::unique_ptr<Player> Player1 = std::make_unique<MinMaxPlayer>(1,std::move(rt));
 
 //    std::unique_ptr<RTEvaluator> rt2=std::make_unique<RTEvaluator>(timingSet1,weightSet1,SQUARE_SCORE1);
 //    std::unique_ptr<Player> Player1 = std::make_unique<MinMaxPlayer>(1,std::move(rt2),4);
@@ -156,8 +156,8 @@ int main(){
 
 
 ////    std::unique_ptr<Player> Player2 = std::make_unique<ConsolePlayer>(1);
-//    std::unique_ptr<Player> Player2 = std::make_unique<ScriptPlayer>(0,"Manav");
-    std::unique_ptr<Player> Player2 = std::make_unique<ScriptPlayer>(0,"Yashvi");
+    std::unique_ptr<Player> Player2 = std::make_unique<ScriptPlayer>(0,"Manav");
+//    std::unique_ptr<Player> Player2 = std::make_unique<ScriptPlayer>(1,"Yashvi");
     GameEngine g(std::move(Player2), std::move(Player1));
 
     g.run();

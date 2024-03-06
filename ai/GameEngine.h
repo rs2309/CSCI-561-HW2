@@ -38,7 +38,7 @@ public:
 
 
                 if (BoardHelper::isValidMove(board,current_player,result) ){
-                    board=BoardHelper::performMove(board,result,current_player);
+                    BoardHelper::performMove(board,result,current_player);
                     moveCount++;
                 }
                 else {
@@ -57,36 +57,36 @@ public:
         cout<<BoardHelper::getWinner(board,time_remaining[0], time_remaining[1],true)<<endl;
 
 
-        return calculateStats();
+        return 0.0;
     }
-    double calculateStats() {
-        double fitness = 0.0;
-        // Assume we have functions or methods to calculate or retrieve these metrics
-        int winner = BoardHelper::getWinner(board,time_remaining[0], time_remaining[1],true); // Simplified; actual implementation may vary
-        int p1,p2;
-        tie(p1,p2)=BoardHelper::playerDiscCounts(board);
-        int movesPlayed = moveCount;
-        double timeUsed = 300-time_remaining[0];
-
-
-        if (winner == players[0]->current_player) {
-            cout<<"GA won"<<endl;
-            fitness += 100; // Base score for winning
-            fitness += (p1-p2) * 25; // Add weighted margin of victory
-            fitness -= movesPlayed * 5; // Penalize longer games
-            fitness -= timeUsed*5;
-            // Adjust for time efficiency, etc.
-        } else {
-            // Adjust fitness based on how close the game was or other considerations for a loss
-            cout<<"Default won"<<endl;
-            fitness -= 100; // Base score for winning
-            fitness -= (p2-p1) * 25; // Add weighted margin of victory
-            fitness -= movesPlayed * 5;
-            fitness -= timeUsed*5;
-        }
-
-        return fitness;
-    }
+//    double calculateStats() {
+//        double fitness = 0.0;
+//        // Assume we have functions or methods to calculate or retrieve these metrics
+//        int winner = BoardHelper::getWinner(board,time_remaining[0], time_remaining[1],true); // Simplified; actual implementation may vary
+//        int p1,p2;
+//        tie(p1,p2)=BoardHelper::playerDiscCounts(board);
+//        int movesPlayed = moveCount;
+//        double timeUsed = 300-time_remaining[0];
+//
+//
+//        if (winner == players[0]->current_player) {
+//            cout<<"GA won"<<endl;
+//            fitness += 100; // Base score for winning
+//            fitness += (p1-p2) * 25; // Add weighted margin of victory
+//            fitness -= movesPlayed * 5; // Penalize longer games
+//            fitness -= timeUsed*5;
+//            // Adjust for time efficiency, etc.
+//        } else {
+//            // Adjust fitness based on how close the game was or other considerations for a loss
+//            cout<<"Default won"<<endl;
+//            fitness -= 100; // Base score for winning
+//            fitness -= (p2-p1) * 25; // Add weighted margin of victory
+//            fitness -= movesPlayed * 5;
+//            fitness -= timeUsed*5;
+//        }
+//
+//        return fitness;
+//    }
 
 };
 

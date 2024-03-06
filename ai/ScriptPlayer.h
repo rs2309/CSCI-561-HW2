@@ -34,7 +34,7 @@ public:
         return 0;
     }
 
-    Move playMove(Reversi board,double t) override{
+    Move playMove(Reversi& board,double t){
         ofstream outputFile("./ScriptPlayer/"+name+"/input.txt");
         outputFile<<(current_player==0?'O':'X')<<endl;
         outputFile<<t<<" "<<t<<endl;

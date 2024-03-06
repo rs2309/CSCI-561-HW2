@@ -1,7 +1,7 @@
 //
 // Created by Rutvik Shah on 2/14/24.
 //
-#include <cstdlib>
+
 #include<iostream>
 #include <algorithm>
 #include<fstream>
@@ -18,8 +18,6 @@ typedef vector<vector<int> > Reversi;
 #ifndef CSCI_561_HW2_BOARDHELPER_H
 #define CSCI_561_HW2_BOARDHELPER_H
 
-//const int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
-//const int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
 const std::vector<std::pair<int, int>> directions = {
         {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
 };
@@ -47,20 +45,22 @@ public:
         return x >= 0 && x < N && y >= 0 && y < N;
     }
     //Evaluator Functions
-//    int static hasAnyMoves(Reversi board,int player){
-//        return findNextMoves(board,player,false).size()>0;
-//    }
-//    pair<int,int> static playerDiscCounts(Reversi board){
-//        int playerDisks = 0, opponentDisks = 0;
-//        for (int x = 0; x < N; ++x) {
-//            for (int y = 0; y < N; ++y) {
-//                if (board[x][y] == 0) ++playerDisks;
-//                else if (board[x][y] == 1) ++opponentDisks;
-//            }
-//        }
-//        return {playerDisks,opponentDisks};
-//    }
-    int static totalDiscCount(Reversi board){
+    ////////////////////
+    int static hasAnyMoves(const Reversi& board,int player){
+        return !findNextMoves(board,player,false).empty();
+    }
+    pair<int,int> static playerDiscCounts(const Reversi& board){
+        int playerDisks = 0, opponentDisks = 0;
+        for (int x = 0; x < N; ++x) {
+            for (int y = 0; y < N; ++y) {
+                if (board[x][y] == 0) ++playerDisks;
+                else if (board[x][y] == 1) ++opponentDisks;
+            }
+        }
+        return {playerDisks,opponentDisks};
+    }
+    ////////////////////
+    int static totalDiscCount(const Reversi& board){
         int diskCount=0;
         for (int x = 0; x < N; ++x) {
             for (int y = 0; y < N; ++y) {
@@ -70,44 +70,59 @@ public:
         }
         return diskCount;
     }
-//    bool static isGameFinished(Reversi board){
-//        return !(hasAnyMoves(board,0) || hasAnyMoves(board,1));
-//    }
-//    int static getWinner(Reversi board,double t1,double t2,bool force_finish=false){
-//        if(!isGameFinished(board) && !force_finish)
-//            //game not finished
-//            return -1;
-//        else{
-//            //count stones
-//            pair<int,int> p= playerDiscCounts(board);
-//            int p1s = p.first;
-//            int p2s = p.second+1;
-//
-//            if(p1s > p2s){
-//                //p1 wins 0
-////                cout<<"O won by:"<<p1s-p2s<<endl;
-//                return 0;
-//            }else if (p1s < p2s){
-//                //p2 wins 1
-////                cout<<"X won by:"<<p2s-p1s<<endl;
-//                return 1;
-//            }else{
-//                if(t1>t2){
-//                    cout<<"O won by time:"<<t1<<endl;
-//                    return 0;
-//                }else if(t1<t2){
-//                    cout<<"1 won by time:"<<t2<<endl;
-//                    return 1;
-//                }else{
-//                    cout<<"1 won by tie breaker:"<<t2<<endl;
-//                    return 1;
-//                }
-//
-//            }
-//        }
-//    }
+    ////////////////////
+    bool static isGameFinished(const Reversi& board){
+        return !(hasAnyMoves(board,0) || hasAnyMoves(board,1));
+    }
+    int static getWinner(const Reversi& board,double t1,double t2,bool force_finish=false){
+        if(!isGameFinished(board) && !force_finish)
+            //game not finished
+            return -1;
+        else{
+            //count stones
+            pair<int,int> p= playerDiscCounts(board);
+            int p1s = p.first;
+            int p2s = p.second+1;
 
-    vector<Move> static getStableDisks(Reversi& board, int player, Move move) {
+            if(p1s > p2s){
+                //p1 wins 0
+//                cout<<"O won by:"<<p1s-p2s<<endl;
+                return 0;
+            }else if (p1s < p2s){
+                //p2 wins 1
+//                cout<<"X won by:"<<p2s-p1s<<endl;
+                return 1;
+            }else{
+                if(t1>t2){
+                    cout<<"O won by time:"<<t1<<endl;
+                    return 0;
+                }else if(t1<t2){
+                    cout<<"1 won by time:"<<t2<<endl;
+                    return 1;
+                }else{
+                    cout<<"1 won by tie breaker:"<<t2<<endl;
+                    return 1;
+                }
+
+            }
+        }
+    }
+    bool static isValidMove(const Reversi& board,int player, Move m){
+        auto moves=BoardHelper::findNextMoves(board,player,false);
+        if(find(moves.begin(),moves.end(),m)!=moves.end()){
+            return true;
+        }else{
+//            for(auto m: moves){
+//                cout<<m.x<<"-"<<m.y<<" ";
+//            }
+//            cout<<endl;
+//            cout<<res.x<<"-"<<res.y<<endl;
+//            cout<<"Invalid Move"<<endl;
+            return false;
+        }
+    }
+    ////////////////////
+    vector<Move> static getStableDisks(const Reversi& board, int player, Move move) {
         unordered_set<Move> stableDiscsSet; // Use an unordered_set for efficient lookups and insertions
 
         for (auto dir:directions) {
@@ -129,7 +144,7 @@ public:
         vector<Move> stableDiscs(stableDiscsSet.begin(), stableDiscsSet.end());
         return stableDiscs;
     }
-    vector<Move> static getFrontierSquares(Reversi board,int player) {
+    vector<Move> static getFrontierSquares(const Reversi& board,int player) {
         unordered_set<Move> frontierSquares;
 
         for (int i = 0; i < N; ++i) {
@@ -145,11 +160,11 @@ public:
             }
         }
 
-        return vector<Move>(frontierSquares.begin(), frontierSquares.end());
+        return {frontierSquares.begin(), frontierSquares.end()};
     }
-    bool static isFrontier(Reversi board, Move m, int player) {// Must be an empty square
+    bool static isFrontier(const Reversi& board, Move m, int player) {// Must be an empty square
         if (board[m.x][m.y] != player) return false;
-        for (auto dir:directions) {
+        for(auto dir:directions) {
             int x = m.x + dir.first;
             int y = m.y + dir.second;
 
@@ -161,44 +176,43 @@ public:
 
         return false; // Not a frontier disk
     }
-    bool static isStable(const std::vector<std::vector<int>>& board, int x, int y, int player) {
-        if (board[x][y] != player) {
-            return false; // Empty or opponent's piece is not stable
-        }
-
-        // A piece is considered stable if it is on a corner
-        if ((x == 0 || x == N - 1) && (y == 0 || y == N - 1)) {
-            return true;
-        }
-        vector<pair<int, int>> directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
-
-        // For simplicity, we consider a piece stable if it's surrounded by pieces of the same color
-        // in all eight directions. This is a very conservative definition of stability.
-        for (const auto& dir : directions) {
-            int nx = x + dir.first, ny = y + dir.second;
-            if (!isValid(nx, ny) || board[nx][ny] != player) {
-                return false; // Found an edge or an opponent's piece
-            }
-        }
-
-        return true; // The piece is surrounded by its own pieces in all directions
-    }
-    bool static isPotentialIsland(Reversi board, int x, int y, int player) {
-        // Check if the cell is surrounded by the opponent's pieces, which may indicate a potential island.
-        if (board[x][y] == -1 || board[x][y] == 1-player) return false;
-
-        // Define directions to check surrounding pieces.
-
-
-        for (const auto& dir : directions) {
-            int nx = x + dir.first, ny = y + dir.second;
-            // If there is at least one direction not controlled by the opponent, it's not an island.
-            if (isValid(nx, ny) && board[nx][ny] != 1-player) {
-                return false;
-            }
-        }
-        return true;  // The piece is surrounded by the opponent's pieces, indicating a potential island.
-    }
+//    bool static isStable(const Reversi& board, int x, int y, int player) {
+//        if (board[x][y] != player) {
+//            return false; // Empty or opponent's piece is not stable
+//        }
+//
+//        // A piece is considered stable if it is on a corner
+//        if ((x == 0 || x == N - 1) && (y == 0 || y == N - 1)) {
+//            return true;
+//        }
+//
+//        // For simplicity, we consider a piece stable if it's surrounded by pieces of the same color
+//        // in all eight directions. This is a very conservative definition of stability.
+//        for (const auto& dir : directions) {
+//            int nx = x + dir.first, ny = y + dir.second;
+//            if (!isValid(nx, ny) || board[nx][ny] != player) {
+//                return false; // Found an edge or an opponent's piece
+//            }
+//        }
+//
+//        return true; // The piece is surrounded by its own pieces in all directions
+//    }
+//    bool static isPotentialIsland(Reversi board, int x, int y, int player) {
+//        // Check if the cell is surrounded by the opponent's pieces, which may indicate a potential island.
+//        if (board[x][y] == -1 || board[x][y] == 1-player) return false;
+//
+//        // Define directions to check surrounding pieces.
+//
+//
+//        for (const auto& dir : directions) {
+//            int nx = x + dir.first, ny = y + dir.second;
+//            // If there is at least one direction not controlled by the opponent, it's not an island.
+//            if (isValid(nx, ny) && board[nx][ny] != 1-player) {
+//                return false;
+//            }
+//        }
+//        return true;  // The piece is surrounded by the opponent's pieces, indicating a potential island.
+//    }
     int static dfs(int x, int y, int player, const Reversi& board, vector<std::vector<bool>>& visited) {
         if (!isValid(x, y) || visited[x][y] || board[x][y] != player) return 0;
         visited[x][y] = true;
@@ -209,7 +223,7 @@ public:
         return size;
     }
 
-    int static isAdjacentToCornerAndCaptured(const Reversi board, int x, int y, int player) {
+    int static isAdjacentToCornerAndCaptured(const Reversi& board, int x, int y, int player) {
         // Check for upper left corner and its adjacent cells
         if ((x == 0 && y == 1) || (x == 1 && y == 0) || (x == 1 && y == 1)) {
             return board[0][0] == player ? -1 : 1;
@@ -232,12 +246,11 @@ public:
     }
 
 
-    vector<Move> static findNextMoves(Reversi board,int player,bool prioritize_moves){
+    vector<Move> static findNextMoves(const Reversi& board,int player,bool prioritize_moves){
         vector<Move> legalMoves;
         unordered_set<Move> checkedMoves;
         // Assuming a square board
         int opponent = 1-player;
-        vector<pair<int, int>> directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
         for (int i = 0; i < N; ++i) {
             for (int j = 0; j < N; ++j) {
@@ -267,8 +280,7 @@ public:
         return legalMoves;
 
     }
-    Reversi static performMove(Reversi  board, Move move, int player) {
-//        vector<Move> flippedDisks;
+    static void performMove(Reversi&  board, Move move, int player) {
         board[move.x][move.y] = player; // Place the disk
 
         for (auto dir:directions) { // Check all eight directions
@@ -284,12 +296,9 @@ public:
             if (isValid(nx, ny) && board[nx][ny] == player) { // Confirm the flip
                 for (auto& p : toFlip) {
                     board[p.first][p.second] = player; // Flip the disks
-//                    flippedDisks.push_back({p.first,p.second});
                 }
             }
         }
-//        return flippedDisks;
-        return board;
     }
 //    void static undoMove(Reversi & board,vector<Move> &flippedDisks, Move move, int player){
 //        for (const auto& pos : flippedDisks) {
@@ -334,7 +343,7 @@ public:
 
         return {board,t1,t2,current_player};
     }
-    void static printBoardState(Reversi board){
+    void static printBoardState(Reversi& board){
         for(int i=0;i<N;i++){
             for(int j=0;j<N;j++){
                 string s=board[i][j]==1?"X":(board[i][j]==0?"O":".");
