@@ -7,14 +7,16 @@
 #include "Player.h"
 #include "BoardHelper.h"
 
+
 class ScriptPlayer: public Player {
 public:
-    ScriptPlayer(int p):Player(p){
+    string name;
+    ScriptPlayer(int p,string n):Player(p),name(n){
     }
     int  run(){
-        int compile_status = system("g++ -std=c++11 -o ./ScriptPlayer/homework ./ScriptPlayer/homework.cpp");
+        int compile_status = system(("g++ -std=c++11 -o ./ScriptPlayer/"+name+"/homework ./ScriptPlayer/"+name+"/homework.cpp").c_str());
 
-        // Check if compilation was successful
+//         Check if compilation was successful
         if (compile_status != 0) {
             // Handle compilation error
             return -1; // Or another error handling approach
@@ -22,7 +24,7 @@ public:
 
         // Step 2: Run the compiled program
         // Use the "./" prefix to run an executable in the current directory on Unix-like systems
-        int run_status = system("./ScriptPlayer/homework");
+        int run_status = system(("./ScriptPlayer/"+name+"/homework").c_str());
 
         if (run_status != 0) {
             // Handle runtime error
@@ -32,8 +34,8 @@ public:
         return 0;
     }
 
-    Move playMove(Reversi &board,double t) override{
-        ofstream outputFile("./ScriptPlayer/input.txt");
+    Move playMove(Reversi board,double t) override{
+        ofstream outputFile("./ScriptPlayer/"+name+"/input.txt");
         outputFile<<(current_player==0?'O':'X')<<endl;
         outputFile<<t<<" "<<t<<endl;
         for(int i=0;i<N;i++){
@@ -48,7 +50,7 @@ public:
 
         int res=run();
 
-        ifstream inputFile("./ScriptPlayer/output.txt");
+        ifstream inputFile("./ScriptPlayer/"+name+"/output.txt");
         string opMove;
         inputFile>>opMove;
         inputFile.close();

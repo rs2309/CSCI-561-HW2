@@ -12,7 +12,7 @@ public:
     int current_player;
 
     Player(int player):current_player(player){}
-    virtual Move playMove(Reversi &board, double t)=0;
+    virtual Move playMove(Reversi board, double t)=0;
 };
 
 

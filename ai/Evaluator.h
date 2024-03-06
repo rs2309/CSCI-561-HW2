@@ -3,24 +3,25 @@
 //
 
 #include "BoardHelper.h"
+#include "BaseEvaluator.h"
 
 #ifndef CSCI_561_HW2_EVALUATOR_H
 #define CSCI_561_HW2_EVALUATOR_H
 
 
-class Evaluator {
+class Evaluator:public BaseEvaluator {
 public:
-    int static diskCountScore(Reversi board,int player) {
-        int playerDisks = 0, opponentDisks = 0;
+    int  diskCountScore(Reversi board,int player) {
+        int playerDisks = 0, opponentDisks = 1;
         for (int x = 0; x < N; ++x) {
             for (int y = 0; y < N; ++y) {
                 if (board[x][y] == player) ++playerDisks;
                 else if (board[x][y] == 1 - player) ++opponentDisks;
             }
         }
-        return (int)(playerDisks - (double)opponentDisks)/(playerDisks+opponentDisks);
+        return 10*((int)(playerDisks - (double)opponentDisks)/(playerDisks+opponentDisks));
     }
-    int static safeEdgeCountScore(vector<vector<int>> board,int player) {
+    int  safeEdgeCountScore(vector<vector<int>> board,int player) {
         int score=0;
         for (int x = 0; x < N; ++x) {
             for (int y = 0; y < N; ++y) {
@@ -30,12 +31,12 @@ public:
         }
         return score*5;
     }
-    int static mobilityScore(vector<vector<int>> board,int player) {
+    int  mobilityScore(vector<vector<int>> board,int player) {
         int playerMoves = BoardHelper::findNextMoves(board, player, false).size();
         int opponentMoves = BoardHelper::findNextMoves(board, 1 - player, false).size();
-        return  (playerMoves - opponentMoves)/(playerMoves + opponentMoves+1);
+        return  10*(playerMoves - opponentMoves)/(playerMoves + opponentMoves+1);
     }
-    int static cornerScore(vector<vector<int>> board,int player) {
+    int  cornerScore(vector<vector<int>> board,int player) {
         int score = 0;
         int corners[4][2] = {{0, 0}, {0, N - 1}, {N - 1, 0}, {N - 1, N - 1}};
         int playerCorners=0,opponentCorners=0;
@@ -43,7 +44,7 @@ public:
             if (board[corner[0]][corner[1]] == player) ++playerCorners;
             else if (board[corner[0]][corner[1]] == 1 - player) ++opponentCorners;
         }
-        return (playerCorners - opponentCorners )/(playerCorners  + opponentCorners +1); // Weight corners more heavily
+        return 10*(playerCorners - opponentCorners )/(playerCorners  + opponentCorners +1); // Weight corners more heavily
     }
 //    int static mobilityImpact(vector<vector<int>>& board, int player, const pair<int, int>& move) {
 //        // Create a copy of the board to simulate the move
@@ -64,11 +65,11 @@ public:
 //        // The mobility impact favors moves that increase the player's mobility and decrease the opponent's
 //        return playerMobilityAfterMove - opponentMobilityAfterMove;
 //    }
-    int static eval(vector<vector<int>> board,int player) {
+    int  eval(Reversi board,int player) {
         // Adjust weights as needed based on strategy
 
         int weightDiskCount = 10;
-        int weightMobility = 2*100;
+        int weightMobility = 5*100;
         int weightSafeEdge= 50;
         int weightCorners = 1000*100;
 

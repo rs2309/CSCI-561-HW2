@@ -5,8 +5,7 @@
 #ifndef CSCI_561_HW2_NMTDF_H
 #define CSCI_561_HW2_NMTDF_H
 #include "BoardHelper.h" // Assumed to exist from your snippet
-//#include "Evaluator.h"   // Assumed to exist from your snippet
-#include "RTEvaluator.h"
+#include "BaseEvaluator.h"
 
 typedef std::string BoardHash;
 
@@ -56,10 +55,10 @@ class  NMTDF{
     unordered_map<pair<Reversi,Move> , int, MyPairHash> moveOrder;
     Move bestMove;
     int currentDepth;
-    RTEvaluator evaluator;
+    unique_ptr<BaseEvaluator> r;
     int current_player;
 
-    int alphaBetaWithMemory(Reversi& board, int depth, int alpha, int beta, int player) {
+    int alphaBetaWithMemory(Reversi board, int depth, int alpha, int beta, int player) {
 //        cout<<"RSSS"<<endl;
         BoardHash hash = hashBoard(board,current_player);
         if (transpositionTable.find(hash) != transpositionTable.end() && depth <= transpositionTable[hash].depth) {
@@ -71,11 +70,11 @@ class  NMTDF{
         }
 
         if (depth == 0 || BoardHelper::isGameFinished(board)) {
-            return evaluator.eval(board,current_player);
+            return r->eval(board,current_player);
         }
 
         int bestValue = std::numeric_limits<int>::min();
-        auto moves = BoardHelper::findNextMoves(board, player,true);
+        auto moves = BoardHelper::findNextMoves(board, player,false);
 
         if (moves.empty()) {
             return -alphaBetaWithMemory(board, depth - 1, -beta, -alpha, 1-player);
@@ -86,9 +85,7 @@ class  NMTDF{
         });
 //        cout<<"RSSS"<<endl;
         for (auto& move : moves) {
-            vector<Move> flippedDisks = BoardHelper::performMove(board, move, player);
-            int value = -alphaBetaWithMemory(board, depth - 1, -beta, -alpha, 1-player);
-            BoardHelper::undoMove(board, flippedDisks, move, player);
+            int value = -alphaBetaWithMemory(BoardHelper::performMove(board, move, player), depth - 1, -beta, -alpha, 1-player);
             if (value > bestValue) {
                 bestValue = value;
                 if (depth == currentDepth) {
@@ -111,7 +108,7 @@ class  NMTDF{
         return bestValue;
     }
 
-    int mtdf(Reversi& board, int firstGuess, int depth) {
+    int mtdf(Reversi board, int firstGuess, int depth) {
         int g = firstGuess;
         int beta;
         int upperBound = std::numeric_limits<int>::max();
@@ -136,7 +133,9 @@ class  NMTDF{
     }
 
 public:
-    NMTDF(int player):current_player(player){}
+    NMTDF(int player,unique_ptr<BaseEvaluator> E):current_player(player){
+        r=std::move(E);
+    }
     Move iterativeDeepening(Reversi& initialState, int maxDepth) {
         int guess = 0;
         for (int depth = 1; depth <= maxDepth; ++depth) {
