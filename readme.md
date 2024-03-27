@@ -67,4 +67,4 @@ This project is proprietary and confidential. Unauthorized copying of files, via
 
 ## Acknowledgments
 
-Thanks to the CSCI-561 staff for providing the project guidelines and to [Cool Math Games](https://www.coolmathgames.com/blog/how-to-play-reversi-basics-and-best-strategies) for the resources on Reversi strategies.
+Thanks to the CSCI-561 staff for providing the project guidelines.
