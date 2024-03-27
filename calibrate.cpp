@@ -30,16 +30,16 @@ vector<int> timingSet3({
                                0,124,126,128,130,133,135,137,140,144});
 std::vector<std::vector<int>> weightSet3 = {
 
-        {8, 85, -40, 10, 210, 520},
-        {8, 85, -40, 10, 210, 520},
-        {33, -50, -15, 4, 416, 2153},
-        {46, -50, -1, 3, 612, 4141},
-        {51, -50, 62, 3, 595, 3184},
-        {33, -5,  66, 2, 384, 2777},
-        {44, 50, 163, 0, 443, 2568},
-        {13, 50, 66, 0, 121, 986},
-        {4, 50, 31, 0, 27, 192},
-        {8, 500, 77, 0, 36, 299}
+        {8, 85, -5, 10, 210, 520, 20},
+        {8, 85, -2, 10, 210, 520, 20},
+        {33, -50, -1, 4, 416, 2153, 20},
+        {46, -50, 0, 3, 612, 4141, 20},
+        {51, -50, 62, 3, 595, 3184, 20},
+        {33, -5,  66, 2, 384, 2777, 20},
+        {44, 50, 163, 0, 443, 2568, 20},
+        {13, 50, 66, 0, 121, 986, 20},
+        {4, 50, 31, 0, 27, 192, 20},
+        {8, 500, 77, 0, 36, 299, 20}
 //        {25, 85, -40, 10, 210, 520},    // Early Game
 //        {28, 95, -40, 10, 310, 720},    // Just before Mid-game Transition
 //        {33, -30, -15, 4, 616, 2553},  // Early Mid-game
@@ -72,7 +72,7 @@ int main(){
 
 
     std::unique_ptr<RTEvaluator> rt2=std::make_unique<RTEvaluator>(timingSet3,weightSet3,SQUARE_SCORE2);
-    std::unique_ptr<Player> Player1 = std::make_unique<MinMaxPlayer>(current_player,std::move(rt2),4);
+    std::unique_ptr<Player> Player1 = std::make_unique<MinMaxPlayer>(current_player,std::move(rt2));
 
 
 

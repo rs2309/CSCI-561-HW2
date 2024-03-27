@@ -12,7 +12,7 @@ class ConsolePlayer:public Player {
 public:
     ConsolePlayer(int p): Player(p){
     }
-    Move playMove(Reversi board,double t) override{
+    Move playMove(Reversi& board,double t) {
         string opMove;
         cin>>opMove;
         Move m{stoi(opMove.substr(1,2))-1,(int)opMove[0]-97};
